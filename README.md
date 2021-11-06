@@ -135,6 +135,7 @@ docker run -it --name pytest -v ~/PycharmProjects/text_similar:/root/text_simila
 #### **<u>一些容易踩坑的地方：</u>**
 
 1. docker中的镜像很简陋，如果只拉取了Python镜像，那么**<u>甚至无法用vim或者vi</u>**去编辑文件。只能通过本地编辑并上传至共享文件夹中实现
+2. 配置端口映射
 
 
 
@@ -146,6 +147,9 @@ docker run -it --name pytest -v ~/PycharmProjects/text_similar:/root/text_simila
 
 ```shell
 exit
+
+# 如果在本地环境，则输入以下指令
+docker stop pytest_crj
 ```
 
 或者Ctrl + D
