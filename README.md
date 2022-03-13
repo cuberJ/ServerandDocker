@@ -93,7 +93,7 @@ docker images  # 可以查看自己刚刚拉取的镜像。如果之前已经拉
 # -p :将服务器的8034端口与docker的22号端口映射上，这样就可以直接通过8034号端口将Python文件传入docker里
 
 # bash：进入容器命令行。
-docker run --name py2test -p 8034:22 -v ~/Pycharm/PythonDockerTest:/home/cairenjie -it python:3.7.4 bash
+docker run --name py2test -p 8034:22 --gpus all -v ~/Pycharm/PythonDockerTest:/home/cairenjie -it python:3.7.4 bash
 ```
 
 进入后是下图的样子：（由于实际创建的文件夹名称不同，故与展示的指令效果不完全一致）
@@ -330,3 +330,23 @@ df -h
 
 
 
+# NLP学习路径
+
+记录一下自己入门的流程，以防以后基本功丢了没法拾回来
+
+## 入门
+
+**<u>完全零基础的入门学习路线</u>**
+
+### 书目
+
+1. 《深度学习的数学》：适合完全不懂什么是神经网络的人阅读
+
+
+
+### 教程
+
+1. transformer：[Transformer论文逐段精读【论文精读】_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1pu411o7BE/)
+   1. [Transformer论文逐段精读【论文精读】 - 哔哩哔哩 (bilibili.com)](https://www.bilibili.com/read/cv13759416?spm_id_from=333.788.b_636f6d6d656e74.70)
+2. Bert：
+3. 图神经网络：
