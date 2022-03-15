@@ -1,5 +1,13 @@
 # 连入服务器
 
+> **写在开头**：
+
+> 本文内容将长久在[cuberJ/ServerandDocker: 配置服务器连接和docker (github.com)](https://github.com/cuberJ/ServerandDocker)更新，若你此刻阅读的文档为PDF或者Markdown文件，可以在上述网址继续获取后续的更新内容！
+>
+> 对于Linux操作不熟练的话，可以参考蒋砚军老师的本科Linux课程，我自己这门课的笔记放在了[cuberJ/LinuxNotes: Linux环境基础指令使用 (github.com)](https://github.com/cuberJ/LinuxNotes)
+>
+> Git的操作笔记：[cuberJ/HowToUseGit: Github使用操作](https://github.com/cuberJ/HowToUseGit)
+
 首先需要先从师兄师姐那里申请账号，密码，端口号和服务器所在的IP地址，再进行以下操作
 
 ## Mac用户
@@ -19,7 +27,7 @@
 ## Windows用户
 
 1. ~~ssh连接器可以考虑gitbash？~~~
-2. 我自己用的<a href='https://termius.com/'>Termius</a>，感觉还可以（至少写这个推荐的时候处于高级版试用期中，等过了试用期再看情况来改评价吧🤡）
+2. 我自己用的<a href='https://termius.com/'>Termius</a>，感觉还可以（至少写这个推荐的时候处于高级版试用期中，等过了试用期再看情况来改评价吧🤡  更新：现在已经是文档写完后的第二年3月15日了，距离第一次写这段话都过去小半年了，依然还没用Windows跑过服务器，我是🕊石锤了）
 
 
 
@@ -93,6 +101,8 @@ docker images  # 可以查看自己刚刚拉取的镜像。如果之前已经拉
 # -p :将服务器的8034端口与docker的22号端口映射上，这样就可以直接通过8034号端口将Python文件传入docker里
 
 # bash：进入容器命令行。
+
+# --gpus all :调用服务器上的显卡用于训练
 docker run --name py2test -p 8034:22 --gpus all -v ~/Pycharm/PythonDockerTest:/home/cairenjie -it python:3.7.4 bash
 ```
 
@@ -118,15 +128,17 @@ docker run --name py2test -p 8034:22 --gpus all -v ~/Pycharm/PythonDockerTest:/h
 >
 >2. 配置端口映射：建议服务器的端口选用8000以上，可以直接尝试上述的`docker run xxxx`指令，如果端口已经被占用，则系统会直接报错无法创建docker，就可以选用另一个端口去尝试;
 >
->   1. 或者可以采用下面的指令：
+>  1. 或者可以采用下面的指令：
 >
->      ```shell
->      netstat -tunple | grep 端口号
->      ```
+>     ```shell
+>     netstat -tunple | grep 端口号
+>     ```
 >
->   2. <font color = red>不要用自己从师兄师姐那里申请账号时获得的端口号作为映射端口。</font>不过就算用了，你也会发现报错，因为这个端口已经被你自己的ssh连接占了
+>  2. <font color = red>不要用自己从师兄师姐那里申请账号时获得的端口号作为映射端口。</font>不过就算用了，你也会发现报错，因为这个端口已经被你自己的ssh连接占了
 >
->3. **<u>端口映射信息建议创建的时候就配置完成，否则后期修改很繁琐</u>**
+>5. **<u>端口映射信息以及GPU配置信息等均建议创建的时候就配置完成，否则后期修改很繁琐</u>**
+>
+>6. 镜像的选择很重要，一定要三思，不然搭了一天之后发现换个镜像1小时就完事也不是不可能
 
 
 
@@ -273,7 +285,7 @@ docker inspect docker的编号 | grep Mounts -A 20
 
 ### Pycharm专业版获取途径
 
-1. ~~盗版~~
+1. ~~盗版是绝对要谴责的，但是如果能偷偷用那就没法谴责了对吧？~~
 2. 在校生身份，从jetbrains官网申请在校大学生免费使用Pycharm专业版。在此之前需要获取一个edu.cn结尾的邮箱，用该邮箱申请即可。整个过程无需科学上网
 
 
@@ -324,36 +336,67 @@ docker inspect docker的编号 | grep Mounts -A 20
 
 
 
-### 常见问题
+## 常见问题(持续更新中)
 
-1. 我的pycharm同步服务器上的文件夹和项目Python解释器之后，没法通过setting里的interpreter安装第三方库怎么办？
+#### 我的pycharm同步服务器上的文件夹和项目Python解释器之后，没法通过setting里的interpreter安装第三方库怎么办？
 
-   > 1. 如果用的是conda，直接在服务器里运行`conda install numpy（假如要装numpy）`即可
-   >
-   >    > 修改conda源：
-   >    >
-   >    > 1. `vim ~/.condarc`
-   >    >
-   >    > 2. 在里面输入如下内容：
-   >    >
-   >    >    ```
-   >    >    channels:
-   >    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
-   >    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
-   >    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
-   >    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/
-   >    >    ssl_verify: true
-   >    >    ```
-   >    >
-   >    > 3. 保存退出，重新运行conda install即可
-   >
-   > 2. 如果用的是pip……暂时没遇到这个情况，希望其他人能补充一下
+> 1. 如果用的是conda，直接在服务器里运行`conda install numpy（假如要装numpy）`即可
+>
+>    > 修改conda源：
+>    >
+>    > 1. `vim ~/.condarc`
+>    >
+>    > 2. 在里面输入如下内容：
+>    >
+>    >    ```
+>    >    channels:
+>    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+>    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+>    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+>    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/
+>    >    ssl_verify: true
+>    >    ```
+>    >
+>    > 3. 保存退出，重新运行conda install即可
+>
+> 2. 如果用的是pip……暂时没遇到这个情况，希望其他人能补充一下
 
-2. 我看到镜像里标注了cuda，Python，怎么查版本号和安装路径？
-   1. Python：
-      1. 安装路径：`which python3.7`
-      2. 版本：`python3`直接就展示版本了
-   2. anaconda：`conda --version`
+#### 我看到镜像里标注了cuda，Python，怎么查版本号和安装路径？
+
+1. Python：
+   1. 安装路径：`which python3.7`
+   2. 版本：`python3`直接就展示版本了
+2. anaconda：`conda --version`
+
+
+
+#### 大文件和训练数据怎么下载到服务器里？
+
+1. 一般是下载到本地，然后通过pycharm或者scp指令上传到服务器
+
+
+
+#### 镜像怎么选择啊？
+
+1. 一般如果用pytorch作为训练模型的话，建议优先选择有pytorch的镜像，不然安装cuda，anaconda之类的玩意会无比糟心
+
+2. TensorFlow，还没用过，等一个用过的人来帮我更新这一段……
+
+3. python这种一般优先度最低，因为很好装……而且有pytorch了，谁家镜像还不搭配一个Python对吧？
+
+4. 如果服务器上没有合适的镜像，就去到dockerhub找一个。实验室里不愿透露姓名的男子刘某建议选用`cuda+版本号`作为搜索关键字
+
+   
+
+#### 为啥我pycharm在连接docker的时候显示connect refuse？
+
+1. 情况一：你自己密码记错了，建议上服务器执行命令`passwd 用户名(一般docker里是root)`重置密码
+2. 情况二：你没设置docker里的ssh或者没有把ssh设置为开机自启动，[参考这里重新配置ssh或者重启ssh](###容器SSH配置)
+3. 情况三（很少见）：服务器上的与docker相连的映射端口被关闭了，向管理员申请打开端口
+
+
+
+
 
 # 常用指令
 
