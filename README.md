@@ -165,7 +165,7 @@ UsePAM yes改为UsePAM no
 
 > 备注：
 >
-> 1. 第一个without-password可能不一定是这个选项，但是无所谓，不管是啥，都换成yes就可以了
+> 1. 第一个without-password可能不一定是这个选项，我遇到的是叫prohibit-password还是类似的啥，删的太快忘了，但是无所谓，不管是啥，都换成yes就可以了
 > 2. 第一个和第二个配置信息的#都要删除
 
 配置完成后执行
@@ -180,6 +180,7 @@ passwd root
 
 ```shell
 ssh -p [docker在服务器上选用的端口] root@[服务器的IP地址]
+另一种方式是通过Pycharm的Tools -> Development -> congiuration里加一个SFTP连接测试，Username填root，password填自己刚刚设置的密码，端口是容器映射的那个端口（8034）
 ```
 
 
@@ -317,6 +318,43 @@ docker inspect docker的编号 | grep Mounts -A 20
 
 
 
+### 自动同步
+
+![image-20220315105548187](image-20220315105548187.png)
+
+
+
+### 常见问题
+
+1. 我的pycharm同步服务器上的文件夹和项目Python解释器之后，没法通过setting里的interpreter安装第三方库怎么办？
+
+   > 1. 如果用的是conda，直接在服务器里运行`conda install numpy（假如要装numpy）`即可
+   >
+   >    > 修改conda源：
+   >    >
+   >    > 1. `vim ~/.condarc`
+   >    >
+   >    > 2. 在里面输入如下内容：
+   >    >
+   >    >    ```
+   >    >    channels:
+   >    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+   >    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+   >    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+   >    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/
+   >    >    ssl_verify: true
+   >    >    ```
+   >    >
+   >    > 3. 保存退出，重新运行conda install即可
+   >
+   > 2. 如果用的是pip……暂时没遇到这个情况，希望其他人能补充一下
+
+2. 我看到镜像里标注了cuda，Python，怎么查版本号和安装路径？
+   1. Python：
+      1. 安装路径：`which python3.7`
+      2. 版本：`python3`直接就展示版本了
+   2. anaconda：`conda --version`
+
 # 常用指令
 
 ## 查看服务器当前状态的指令
@@ -324,6 +362,7 @@ docker inspect docker的编号 | grep Mounts -A 20
 ```shell
 # 查看显卡占用情况
 nvtop
+nvidia-smi
 # 查看磁盘占用情况
 df -h
 ```
