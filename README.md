@@ -396,6 +396,30 @@ docker inspect docker的编号 | grep Mounts -A 20
 
 
 
+#### 如果我跑训练模型时间很久，导致ssh断开连接，再次重进服务器的时候，输出的训练信息在界面上都丢失了怎么办？
+
+采用shell重定向输出的方式输出到log.txt文件中
+
+```shell
+python3 train.py > log.txt 2>&1
+```
+
+如果想同时在命令行界面和文件中都能看到输出的结果：
+
+```
+python3 train.py | tee log.txt
+```
+
+如果想跑模型的过程中干点别的，就用&的方式将运行代码的进程放在后台
+
+```shell
+python3 train.py > log.txt 2>&1 &
+```
+
+
+
+
+
 
 
 # 常用指令
