@@ -436,6 +436,39 @@ df -h
 
 
 
+## 服务器维修
+
+### Network is unreachable
+
+PC3是115服务器（门口两台一起放着的服务器里靠外面的那一台），204服务器是PC4（门口两台一起的服务器里贴着墙的那一台）
+
+多半是无线模块掉了，步骤如下：
+
+1. 执行ifconfig，如果最后一个段落（`w1x646e啥啥啥`）里inet addr没有显示ip地址，说明是无线模块掉了
+
+2. 走到实验室找到服务器，把服务器屁股上的无线模块拔下来重新插一下（就是带一根家用WiFi一样天线的）
+
+3. 然后执行如下命令：
+
+   ```shell
+   先进入/home/xinngximing/rt18821CU文件夹
+   
+   make
+   # 执行之后界面里最后一行出现ERROR 2 是正常情况
+   sudo make install
+   sudo modprobe 8821cu
+   sudo usb_modeswitch -KW -v 0bda -p 1a2b
+   # 这个时候执行nmcli c s(是connect show的缩写）AP_Wired2WireLess_2E15那个网绿色代表已经连上了，不用再管，白色需要激活
+   sudo nmcli connection up AP_Wired2WireLess_2E15
+   
+   ```
+
+4. 如果需要切换显示器界面，按一下连着的转换器切换到PC4即可。如果坏掉的是204服务器，有可能需要用网线连接到交换机上，通过有线地址外部访问维修
+
+   转换器如图所示
+
+    ![image-20220322161004156](image-20220322161004156.png)
+
 # NLP学习路径
 
 记录一下自己入门的流程，以防以后基本功丢了没法拾回来
