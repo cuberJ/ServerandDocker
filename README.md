@@ -102,6 +102,10 @@ docker run --name tmprun -it hello-world
 
 
 
+由于我们大部分时间是需要利用GPU的，所以还需要使用参数`--gpus all`.所以需要安装NVIDIA驱动
+
+
+
 ### nvidia驱动配置
 
 为了使用`nvidia-smi`指令，需要配置驱动
@@ -132,6 +136,31 @@ sudo apt install nvidia-driver-510
 sudo reboot # 重启服务器，这一步需要在实验室操作，否则重启之后ssh未经自启动测试前可能会断开
 ```
 
+安装之后，为了适配docker，还需要给docker做额外的指令适配
+
+```shell
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - 
+# 这一步会显示OK
+curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list # 本次系统采用的是18.04
+sudo apt-get update 
+sudo apt-get install nvidia-container-toolkit
+
+```
+
+检查显卡是否能在docker中使用：
+
+```shell
+# 下载一个有pytorch和cuda的images
+docker pull lbjcom/cuda10.1-pytorch1.7.1
+# 进入python3
+>>> import pytorch
+>>> torch.cuda.is_available()
+# 显示true表示可以检测到显卡
+```
+
+
+
 
 
 ### 遇到的问题
@@ -139,10 +168,6 @@ sudo reboot # 重启服务器，这一步需要在实验室操作，否则重启
 #### 开机卡在Ubuntu紫色的界面，一直进不去，屏幕中央的图标下面有五个小点在依次闪烁
 
 多半是硬件问题，考虑下换个硬盘插槽或者显卡插槽（这一步我自己修了三天）
-
-
-
-####
 
 
 
