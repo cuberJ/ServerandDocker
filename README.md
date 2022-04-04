@@ -41,19 +41,108 @@
 
 
 
-# Docker配置
+# 从0开始的服务器配置
 
 由于一群人在一个系统里跑代码，环境随便配会混乱，所以每个人采用docker的方式运行自己的程序
-
-
-
-## docker环境配置
 
 该条目由管理员阅读并配置服务器Docker环境
 
 version：2021年11月6日版
 
 采用服务器T630，该服务器上Docker已完成配置
+
+
+
+version：2022年4月4日版
+
+2022年3月底由于实验室服务器搬迁，导致服务器49.142崩溃，于是花了一个礼拜挨个排除硬件问题和软件问题，重装了大概20次系统
+
+现在说明docker，NVIDIA，ssh等基本服务的配置
+
+## ssh配置
+
+推荐以安装ssh作为服务器重生的第一步，因为这样大家就不必非得在实验室泡着才能操作后续的步骤，而是可以溜到宿舍~~摸鱼划水~~继续配置
+
+执行下面的命令
+
+```shell
+sudo apt-get update
+sudo apt-get install openssh-server
+sudo apt-get install vim
+service ssh start
+sudo systemctl enable ssh # 开机自启动
+sudo reboot
+sudo systemctl status ssh # 查看重启后是否自启动，有Active：active(running)表示能够自启动了
+```
+
+
+
+### docker配置
+
+执行以下命令：
+
+```shell
+curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+docker ps -a
+```
+
+如果docker ps之后出现的内容是报错，可以执行一下这个指令：
+
+```shell
+sudo setfacl --modify user:bupt630:rw /var/run/docker.sock
+```
+
+再实验一下能否运行
+
+```shell
+docker pull hello-world
+docker images
+docker run --name tmprun -it hello-world
+```
+
+
+
+### nvidia驱动配置
+
+为了使用`nvidia-smi`指令，需要配置驱动
+
+驱动的选择方式使用指令如下：
+
+```shell
+# 安装gcc
+sudo apt-get install build-essential
+
+# 查看驱动安装版本
+ubuntu-drivers devices
+# 显示内容如下：
+== /sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0 ==
+modalias : pci:v000010DEd00002208sv00001458sd00004081bc03sc00i00
+vendor   : NVIDIA Corporation
+driver   : nvidia-driver-510-server - distro non-free recommended
+driver   : nvidia-driver-470 - distro non-free
+driver   : nvidia-driver-510 - distro non-free
+driver   : nvidia-driver-470-server - distro non-free
+driver   : xserver-xorg-video-nouveau - distro free builtin
+```
+
+找到有`recommended`的那一行，显示的是需要`nvidia-driver-510`，于是安装510版本的驱动(本次服务器上的显卡只有一块3080ti)
+
+```shell
+sudo apt install nvidia-driver-510
+sudo reboot # 重启服务器，这一步需要在实验室操作，否则重启之后ssh未经自启动测试前可能会断开
+```
+
+
+
+### 遇到的问题
+
+#### 开机卡在Ubuntu紫色的界面，一直进不去，屏幕中央的图标下面有五个小点在依次闪烁
+
+多半是硬件问题，考虑下换个硬盘插槽或者显卡插槽（这一步我自己修了三天）
+
+
+
+####
 
 
 
