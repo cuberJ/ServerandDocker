@@ -59,6 +59,12 @@ version：2022年4月4日版
 
 现在说明docker，NVIDIA，ssh等基本服务的配置
 
+
+
+version:2022年4月7日版
+
+服务器又崩了，实际检测发现，**<u>18.04版本+5.4内核版本的启动盘就是个臭弟弟，一堆bug，功能不全，好一点的主板都无法兼容，建议改用20.04版本作为系统</u>**
+
 ## ssh配置
 
 推荐以安装ssh作为服务器重生的第一步，因为这样大家就不必非得在实验室泡着才能操作后续的步骤，而是可以溜到宿舍~~摸鱼划水~~继续配置
@@ -86,7 +92,13 @@ curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
 docker ps -a
 ```
 
-如果docker ps之后出现的内容是报错，可以执行一下这个指令：
+如果docker ps之后出现的内容是如下报错
+
+```shell
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Post "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/images/create?fromImage=lbjcom%2Fcuda10.1-pytorch1.7.1&tag=latest": dial unix /var/run/docker.sock: connect: permission denied
+```
+
+可以执行一下这个指令：
 
 ```shell
 sudo setfacl --modify user:bupt630:rw /var/run/docker.sock
@@ -136,7 +148,7 @@ sudo apt install nvidia-driver-510
 sudo reboot # 重启服务器，这一步需要在实验室操作，否则重启之后ssh未经自启动测试前可能会断开
 ```
 
-安装之后，为了适配docker，还需要给docker做额外的指令适配
+安装之后，为了适配docker，还需要给docker做额外的指令适配（18.04版本）
 
 ```shell
 distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
@@ -145,8 +157,16 @@ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
 curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list # 本次系统采用的是18.04
 sudo apt-get update 
 sudo apt-get install nvidia-container-toolkit
-
 ```
+
+如果系统是20.04版本，则执行下面这个指令：(https://blog.csdn.net/dou3516/article/details/108314908)
+
+```shell
+sudo apt-get install nvidia-container-runtime
+systemctl docker restart
+```
+
+
 
 检查显卡是否能在docker中使用：
 
@@ -157,6 +177,35 @@ docker pull lbjcom/cuda10.1-pytorch1.7.1
 >>> import pytorch
 >>> torch.cuda.is_available()
 # 显示true表示可以检测到显卡
+```
+
+
+
+### 用户管理
+
+创建用户
+
+```shell
+# 建议先直接用管理员账号进入这个权限
+sudo su
+adduser student # 这里不推荐使用useradd指令，因为useradd指令创建的用户是不具备登录功能的，手动配置很麻烦
+# 后面一路回车就行了
+usermod -s /bin/bash student
+usermod -d /hoem/student student
+
+```
+
+
+
+#### 删除用户
+
+```shell
+deluser student
+# 如果这里显示student被进程占用，进入sudo模式kill
+sudo kill -9 [进程PID]
+deluser --remove-home student
+# 查看删除成功
+cat /etc/passwd | grep student # 如果没有显示，说明删除成功了
 ```
 
 
@@ -535,6 +584,14 @@ python3 train.py > log.txt 2>&1 &
 #### 如果在执行apt-get update的时候，总是显示进度为0怎么办
 
 多半是创建docker的时候端口映射出问题了，建议重新创建一个docker重头开始吧
+
+
+
+#### apt-get update显示硬盘空间不足
+
+![image-20220407155131992](image-20220407155131992.png)
+
+如果出现如下情况，多半是硬盘/home文件夹满了，删掉点不用的docker就行了
 
 
 
