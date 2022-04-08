@@ -604,7 +604,7 @@ python3 train.py > log.txt 2>&1 &
 ```shell
 # 查看显卡占用情况
 nvtop
-nvidia-smi
+nvidia-smi # 显示不全的情况下，用-a可以显示完整信息，但不便于阅读；用-L参数可以显示所有显卡的完整型号和对应的GPU顺序
 # 查看磁盘占用情况
 df -h
 ```
