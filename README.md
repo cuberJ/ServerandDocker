@@ -497,7 +497,9 @@ docker inspect docker的编号 | grep Mounts -A 20
 
 ![image-20220315105548187](image-20220315105548187.png)
 
+或者选中上一个Options，将画圈的部分改为保存时同步
 
+![image-20220408112435140](image-20220408112435140.png)
 
 ## 常见问题(持续更新中)
 
@@ -535,7 +537,7 @@ docker inspect docker的编号 | grep Mounts -A 20
 
 #### 大文件和训练数据怎么下载到服务器里？
 
-1. 一般是下载到本地，然后通过pycharm或者scp指令上传到服务器
+1. 一般是下载到本地，然后通过pycharm或者scp指令上传到服务器，注意docker用-v指令映射目录的时候，位于服务器上的那个目录应该尽量避开home文件夹
 
 
 
@@ -595,6 +597,36 @@ python3 train.py > log.txt 2>&1 &
 
 
 
+#### apt-get update显示网络错误
+
+```shell
+Clearsigned file isn't valid, got 'NOSPLIT' (does the network require authentication?)
+```
+
+更新的时候如果出现这个报错，多半是因为校园网网关没开，没法连接外网。尝试一下退出到服务器界面，ping一下百度，如果ping不通，但是能ping通10.3.8.211，说明就是要登录一下校园网账号的问题了
+
+如果服务器没有图形化界面登录校园网服务，则使用下面命令
+
+```shell
+curl 'http://10.3.8.211/login' --data "user=&pass=" # user=后面填自己的校园网账号，pass填自己校园网账号密码
+```
+
+
+
+#### 服务器IP地址变动之后，重新连接发现ssh连接报错，提示Warning并拒绝连接
+
+多半是因为ssh密钥变动导致拒绝连接了。
+
+如果是Mac电脑:
+
+```shell
+rm ~/.ssh/known_hosts
+```
+
+删除后，重新连接ssh，会提示是否要相信该地址，输入yes即可
+
+如果是Windows，等一个教程……
+
 
 
 # 常用指令
@@ -610,6 +642,108 @@ df -h
 ```
 
 
+
+## 一些服务器可以使用的小功能
+
+### 校园网账户查询
+
+通过bash脚本直接自动查询校园网财务系统，可以规避工商银行的每月付费到账通知
+
+~~这个功能后期可以改为代码运行完毕的时候发送邮件提醒自己运行结束了（其实并不能，因为docker里再做一个Ubuntu有点呆呆的）~~
+
+~~然而这个功能出于安全性，不建议在服务器上长期部署，因为密码可能会明文保存~~
+
+
+
+#### 建立邮件服务
+
+安装mailutils
+
+```shell
+sudo apt-get install mailutils
+```
+
+弹出界面回车就完事了
+
+修改发件信息配置
+
+```shell
+sudo vim /etc/s-nail.rc
+# 添加以下内容
+set from=xxxxxxxxxx@bupt.edu.cn                        #设置发送邮箱
+set smtp=smtps://smtp.exmail.qq.com:465                  #设置smtp服务器和端口
+set smtp-auth-user=xxxxxxxxxx@bupt.edu.cn      #设置用户名，记得加域名啊
+set smtp-auth-password=xxxxxxxxxxx         #邮箱密码，由于是明文保存，所以安全性存疑
+set smtp-auth=login
+```
+
+保存即可
+
+后面可能会在发邮件的过程中提示发件失败
+
+```shell
+ mail
+ # 发件失败的邮件会自动转存到系统内，查看的时候邮件中会包含错误信息如下
+ SMTPUTF8 is required, but was not offered by host mxbiz2.qq.com[120.232.31.233]
+```
+
+执行下列指令修复
+
+```shell
+sudo vim /etc/postfix/main.cf 
+# 在文件最后加一句 
+smtputf8_enable = no
+
+# 然后执行重启
+postfix reload
+```
+
+就可以发送邮件了
+
+另外，经过测试，网易邮箱（163）对发送方的邮件配置要求较为严格，建议采用QQ邮箱作为收件方，学校的edu邮箱可以作为发件方
+
+发送邮件测试
+
+```shell
+mail -s '这是邮件标题' -a '这里写邮件的附件路径' -- receiver@qq.com < 正文.txt
+# 或者用这种方式
+mail -s '这是邮件标题' -a '这里写邮件的附件路径' -- receiver@qq.com <<< '这是正文'
+```
+
+QQ有可能会发送到垃圾箱里，记得收到后多加入几次正常邮件就可以拉入白名单中了
+
+发送的邮件可能会出现编码问题，QQ邮箱官方没说到底用的是什么字符集编码，经过我自己的测试，应该是采用了UTF-8字符集，但是Ubuntu自己在cat的时候貌似又不是utf-8……所以建议发送的时候，先将保存的文本转为utf-8文件，然后采用读文件的方式发送。这里附上我自己写的bash脚本。~~很久不写正则了，都忘了怎么写了，临时抱佛脚学的~~
+
+```shell
+cookie='教务系统的财务页面获得cookie'
+wget --header="Cookie:$cookie" --http-user=学号 --http-passwd=密码 http://cwxt.bupt.edu.cn/gxzhcx50/Views/Jgcwxx/Welcome.aspx -O /home/cairenjie/Money.aspx
+# test=`cat Money.aspx | grep 硕士
+cat Money.aspx  | grep 发放 | sed -e 's/<[a-zA-Z0-9\-\"\=\/\;\:]*>/ /g' | sed -e 's/<td.*>//g' | sed -e 's/<th scope="col">/ /g' | cat > info.txt
+test=`cat Money.aspx  | grep 发放 | sed -e 's/<[a-zA-Z0-9\-\"\=\/\;\:]*>/ /g' | sed -e 's/<td.*>//g' | sed -e 's/<th scope="col">/ /g'`
+
+echo '下面是筛选后的信息'
+error_judge=`cat Money.aspx | grep 错误`
+echo "error_judge:$error_judge"
+if [ $error_judge ];
+	then echo 'cookie已经失效，请更换';
+	mail -s '爬虫的cookie已经失效' 2113159231@qq.com <<< '爬虫的cookie已经失效，尽快更换'
+else
+	iconv -c  -f 'utf-8' -t 'UTF-8' info.txt > info2.txt # 这一步属于历史遗留代码，不知道删了有没有用，反正留着没啥影响……
+	mail -s '补助金' 你的邮箱@qq.com < info2.txt
+	echo '邮件已发送'
+fi
+```
+
+执行脚本就可以了
+
+
+
+#### 一些备注
+
+1. 这个脚本其实功能并不完善，因为从构思这个功能到决定放弃一共就花了3个小时，以上这些是三个小时里摸索出来的，所以很粗糙
+2. cookie很容易失效，如果用Python应该会比较容易更新cookie，但是没动力写了
+3. 正则过滤的也不是很好，冗余信息太多了，有待更新
+4. 如果部署在非校园网环境下的服务器里，不知道能不能访问到教务系统了……
 
 ## 服务器维修
 
