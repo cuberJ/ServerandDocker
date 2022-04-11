@@ -804,3 +804,17 @@ PC3是115服务器（门口两台一起放着的服务器里靠外面的那一�
    1. [Transformer论文逐段精读【论文精读】 - 哔哩哔哩 (bilibili.com)](https://www.bilibili.com/read/cv13759416?spm_id_from=333.788.b_636f6d6d656e74.70)
 2. Bert：
 3. 图神经网络：
+
+
+
+## 一些调整模型的经验
+
+### 常见报错
+
+1. RuntimeError: DataLoader worker (pid(s) 13364, 13365) exited unexpectedly
+
+   这种多半是batch_size大了，也有一种说法是cuda的环境中内存不足，我自己是把batch_size减小了一半多，成功运行
+
+2. ERROR: Unexpected bus error encountered in worker. This might be caused by insufficient shared memory (shm)
+
+   内存不足，改docker的分配的虚拟内存。理论上可以通过``docker stop `并修改配置文件实现，但是很麻烦，而且还需要管理员权限。我自己是重新建了一个docker……
