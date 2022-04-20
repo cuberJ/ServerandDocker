@@ -193,6 +193,12 @@ adduser student # 这里不推荐使用useradd指令，因为useradd指令创建
 usermod -s /bin/bash student
 usermod -d /hoem/student student
 
+# 师姐提供的docker授权方法，也是实验室用的最多的授权方法
+sudo useradd relation -m -G docker -s /bin/bash
+
+# 我自己尝试的另一种授权docker
+sudo usermod -aG docker student 
+sudo setfacl --modify user:student:rw /var/run/docker.sock
 ```
 
 
