@@ -83,7 +83,7 @@ sudo systemctl status ssh # 查看重启后是否自启动，有Active：active(
 
 
 
-### docker配置
+## docker配置
 
 执行以下命令：
 
@@ -118,7 +118,7 @@ docker run --name tmprun -it hello-world
 
 
 
-### nvidia驱动配置
+## nvidia驱动配置
 
 为了使用`nvidia-smi`指令，需要配置驱动
 
@@ -181,7 +181,7 @@ docker pull lbjcom/cuda10.1-pytorch1.7.1
 
 
 
-### 用户管理
+## 用户管理
 
 创建用户
 
@@ -191,12 +191,12 @@ sudo su
 adduser student # 这里不推荐使用useradd指令，因为useradd指令创建的用户是不具备登录功能的，手动配置很麻烦
 # 后面一路回车就行了
 usermod -s /bin/bash student
-usermod -d /hoem/student student
+usermod -d /home/student student
 
 # 师姐提供的docker授权方法，也是实验室用的最多的授权方法
 sudo useradd relation -m -G docker -s /bin/bash
 
-# 我自己尝试的另一种授权docker
+# 我自己尝试的另一种 授权docker
 sudo usermod -aG docker student 
 sudo setfacl --modify user:student:rw /var/run/docker.sock
 ```
@@ -272,7 +272,7 @@ docker images  # 可以查看自己刚刚拉取的镜像。如果之前已经拉
 # bash：进入容器命令行。
 
 # --gpus all :调用服务器上的显卡用于训练
-docker run --name py2test -p 8034:22 --gpus all -v ~/Pycharm/PythonDockerTest:/home/cairenjie -it python:3.7.4 bash
+ docker run --name py2test -p 8034:22 --gpus all -v ~/Pycharm/PythonDockerTest:/home/cairenjie -it python:3.7.4 bash
 ```
 
 进入后是下图的样子：（由于实际创建的文件夹名称不同，故与展示的指令效果不完全一致）
@@ -354,6 +354,9 @@ UsePAM yes改为UsePAM no
 ```shell
 service ssh restart
 # 记得重新配置root用户的密码
+
+# pip换源
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 passwd root
 ```
 
