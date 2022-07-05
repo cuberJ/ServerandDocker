@@ -83,6 +83,26 @@ sudo systemctl status ssh # 查看重启后是否自启动，有Active：active(
 
 
 
+## 硬盘配置
+
+挂载新硬盘到服务器：
+
+```shell
+mkdir /store # 创建挂载用的目录
+fdisk -l # 查看检测到的硬盘位置
+#选择需要挂载的硬盘信息
+mount /dev/disk1 /store #挂载到目录
+df -hT # 查看挂载效果
+```
+
+挂载完毕后，由于是根目录下，大部分普通用户没有读写权限：
+
+```shell
+chmod -R 777 /store # 对所有用户开启读写权限
+```
+
+
+
 ## docker配置
 
 执行以下命令：
