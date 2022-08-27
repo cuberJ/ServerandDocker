@@ -568,6 +568,14 @@ docker inspect docker的编号 | grep Mounts -A 20
 
 1. 一般是下载到本地，然后通过pycharm或者scp指令上传到服务器，注意docker用-v指令映射目录的时候，位于服务器上的那个目录应该尽量避开home文件夹
 
+   ```shell
+   # 在自己电脑的bash里执行如下指令可以下载服务器上的文件到本地
+   # scp -P 端口号 -r 用户名@服务器IP地址:服务器上的目录  本地目录
+   scp -P 22000 -r student@10.112.32.43:/home/test /home/Document
+   ```
+
+   
+
 
 
 #### 镜像怎么选择啊？
