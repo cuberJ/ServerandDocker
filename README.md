@@ -65,6 +65,14 @@ version:2022年4月7日版
 
 服务器又崩了，实际检测发现，**<u>18.04版本+5.4内核版本的启动盘就是个臭弟弟，一堆bug，功能不全，好一点的主板都无法兼容，建议改用20.04版本作为系统</u>**
 
+
+
+version:2022年9月7日版
+
+新的服务器（3080+2080ti，Asus主板）不认20.04的系统了，u盘开机找不到Ubuntu install选项，用了各种办法都不行，最后重做了启动盘，用了22.04版本的Ubuntu，所以现在20.04也是臭弟弟了
+
+（按照当前的装机时间线，由此看来两年内实验室不能再买新的服务器了，不然24.04的Ubuntu还没出，装不了系统）
+
 ## ssh配置
 
 推荐以安装ssh作为服务器重生的第一步，因为这样大家就不必非得在实验室泡着才能操作后续的步骤，而是可以溜到宿舍~~摸鱼划水~~继续配置
@@ -76,6 +84,7 @@ sudo apt-get update
 sudo apt-get install openssh-server
 sudo apt-get install vim
 service ssh start
+sudo apt-get install net-tools
 sudo systemctl enable ssh # 开机自启动
 sudo reboot
 sudo systemctl status ssh # 查看重启后是否自启动，有Active：active(running)表示能够自启动了
@@ -108,6 +117,7 @@ chmod -R 777 /store # 对所有用户开启读写权限
 执行以下命令：
 
 ```shell
+sudo apt-get install curl
 curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
 docker ps -a
 ```
@@ -179,11 +189,31 @@ sudo apt-get update
 sudo apt-get install nvidia-container-toolkit
 ```
 
-如果系统是20.04版本，则执行下面这个指令：(https://blog.csdn.net/dou3516/article/details/108314908)
+#### 如果系统是20.04版本，则执行下面这个指令：(https://blog.csdn.net/dou3516/article/details/108314908)
 
 ```shell
 sudo apt-get install nvidia-container-runtime
 systemctl docker restart
+```
+
+#### 如果系统是22.04：（[在Ubuntu使用nvidia-docker从零搭建pytorch容器环境 | Tnnidm-Blog](https://www.tnnidm.com/install-nvidia-docker-in-ubuntu/)）
+
+设置仓库：
+
+```shell
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+      && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+      && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+            sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+            sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+```
+
+然后安装nvidia-docker：
+
+```shell
+apt update # 更新源
+apt install -y nvidia-docker2 # 安装nvidia-docker
+systemctl restart docker
 ```
 
 
