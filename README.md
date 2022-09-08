@@ -3,9 +3,9 @@
 > **写在开头**：
 
 > 本文内容将长久在[cuberJ/ServerandDocker: 配置服务器连接和docker (github.com)](https://github.com/cuberJ/ServerandDocker)更新，若你此刻阅读的文档为PDF或者Markdown文件，可以在上述网址继续获取后续的更新内容！
->
+> 
 > 对于Linux操作不熟练的话，可以参考蒋砚军老师的本科Linux课程，我自己这门课的笔记放在了[cuberJ/LinuxNotes: Linux环境基础指令使用 (github.com)](https://github.com/cuberJ/LinuxNotes)
->
+> 
 > Git的操作笔记：[cuberJ/HowToUseGit: Github使用操作](https://github.com/cuberJ/HowToUseGit)
 
 首先需要先从师兄师姐那里申请账号，密码，端口号和服务器所在的IP地址，再进行以下操作
@@ -13,7 +13,7 @@
 ## Mac用户
 
 1. 打开系统自带的terminal，输入指令：
-
+   
    ```shell
    格式为：ssh -p 端口号 用户名@IP地址
    例如：端口号为1000，用户名zhangsan，IP地址:192.168.1.1
@@ -22,14 +22,10 @@
 
 2. 回车后，terminal会跳转至服务器登录页面，要求输入密码，输入登记的密码即可登录
 
-
-
 ## Windows用户
 
 1. ~~ssh连接器可以考虑gitbash？~~~
 2. 我自己用的<a href='https://termius.com/'>Termius</a>，感觉还可以（至少写这个推荐的时候处于高级版试用期中，等过了试用期再看情况来改评价吧🤡  更新：现在已经是文档写完后的第二年3月15日了，距离第一次写这段话都过去小半年了，依然还没用Windows跑过服务器，我是🕊石锤了）
-
-
 
 ## 服务器连接的一些情况
 
@@ -38,8 +34,6 @@
 2. 实验室内部的不成文规定：文件尽量不要放在home文件夹下：
    1. 常见的错误：执行cd指令之后，bash会停留在自己的用户目录下，但是用户目录也是在home下的子目录，所以建议不要在自己的目录下面存啥大文件
    2. 尽量将大文件堆到store文件夹下
-
-
 
 # 从0开始的服务器配置
 
@@ -51,21 +45,15 @@ version：2021年11月6日版
 
 采用服务器T630，该服务器上Docker已完成配置
 
-
-
 version：2022年4月4日版
 
 2022年3月底由于实验室服务器搬迁，导致服务器49.142崩溃，于是花了一个礼拜挨个排除硬件问题和软件问题，重装了大概20次系统
 
 现在说明docker，NVIDIA，ssh等基本服务的配置
 
-
-
 version:2022年4月7日版
 
 服务器又崩了，实际检测发现，**<u>18.04版本+5.4内核版本的启动盘就是个臭弟弟，一堆bug，功能不全，好一点的主板都无法兼容，建议改用20.04版本作为系统</u>**
-
-
 
 version:2022年9月7日版
 
@@ -90,8 +78,6 @@ sudo reboot
 sudo systemctl status ssh # 查看重启后是否自启动，有Active：active(running)表示能够自启动了
 ```
 
-
-
 ## 硬盘配置
 
 挂载新硬盘到服务器：
@@ -109,8 +95,6 @@ df -hT # 查看挂载效果
 ```shell
 chmod -R 777 /store # 对所有用户开启读写权限
 ```
-
-
 
 ## docker配置
 
@@ -142,11 +126,7 @@ docker images
 docker run --name tmprun -it hello-world
 ```
 
-
-
 由于我们大部分时间是需要利用GPU的，所以还需要使用参数`--gpus all`.所以需要安装NVIDIA驱动
-
-
 
 ## nvidia驱动配置
 
@@ -216,8 +196,6 @@ apt install -y nvidia-docker2 # 安装nvidia-docker
 systemctl restart docker
 ```
 
-
-
 检查显卡是否能在docker中使用：
 
 ```shell
@@ -228,8 +206,6 @@ docker pull lbjcom/cuda10.1-pytorch1.7.1
 >>> torch.cuda.is_available()
 # 显示true表示可以检测到显卡
 ```
-
-
 
 ## 用户管理
 
@@ -251,8 +227,6 @@ sudo usermod -aG docker student
 sudo setfacl --modify user:student:rw /var/run/docker.sock
 ```
 
-
-
 #### 删除用户
 
 ```shell
@@ -264,17 +238,11 @@ deluser --remove-home student
 cat /etc/passwd | grep student # 如果没有显示，说明删除成功了
 ```
 
-
-
-
-
 ### 遇到的问题
 
 #### 开机卡在Ubuntu紫色的界面，一直进不去，屏幕中央的图标下面有五个小点在依次闪烁
 
 多半是硬件问题，考虑下换个硬盘插槽或者显卡插槽（这一步我自己修了三天）
-
-
 
 ## docker使用
 
@@ -284,8 +252,6 @@ cat /etc/passwd | grep student # 如果没有显示，说明删除成功了
 
 镜像是只读文件，容器是在镜像的基础上，创建出的一个基于该镜像的可运行环境。我们大部分的时间都是基于docker在调试代码的
 
-
-
 ### 查看服务器上的现有镜像及容器
 
 ```shell
@@ -293,16 +259,12 @@ docker images # 查看镜像
 docker ps -a # 查看容器
 ```
 
-
-
 ### 拉取Python镜像
 
 ```shell
 docker pull python:3.7.4 #拉取Python3.7.4版本的镜像
 docker images  # 可以查看自己刚刚拉取的镜像。如果之前已经拉取过，则该镜像不会更新为现在的时间，而是保留老版本的时间
 ```
-
-
 
 ### 创建运行容器
 
@@ -339,27 +301,23 @@ docker images  # 可以查看自己刚刚拉取的镜像。如果之前已经拉
 
 ![image-20211109160127370](image-20211109160127370.png)
 
-
-
->#### **<u>一些容易踩坑的地方：</u>**
->
->1. docker中的环境很简陋，如果只拉取了Python镜像，那么**<u>甚至无法用vim或者vi</u>**去编辑文件。需要使用Vim的话还需要自己安装（见容器SSH配置）
->
->2. 配置端口映射：建议服务器的端口选用8000以上，可以直接尝试上述的`docker run xxxx`指令，如果端口已经被占用，则系统会直接报错无法创建docker，就可以选用另一个端口去尝试;
->
->  1. 或者可以采用下面的指令：
->
->     ```shell
->     netstat -tunple | grep 端口号
->     ```
->
->  2. <font color = red>不要用自己从师兄师姐那里申请账号时获得的端口号作为映射端口。</font>不过就算用了，你也会发现报错，因为这个端口已经被你自己的ssh连接占了
->
->5. **<u>端口映射信息以及GPU配置信息等均建议创建的时候就配置完成，否则后期修改很繁琐</u>**
->
->6. 镜像的选择很重要，一定要三思，不然搭了一天之后发现换个镜像1小时就完事也不是不可能
-
-
+> #### **<u>一些容易踩坑的地方：</u>**
+> 
+> 1. docker中的环境很简陋，如果只拉取了Python镜像，那么**<u>甚至无法用vim或者vi</u>**去编辑文件。需要使用Vim的话还需要自己安装（见容器SSH配置）
+> 
+> 2. 配置端口映射：建议服务器的端口选用8000以上，可以直接尝试上述的`docker run xxxx`指令，如果端口已经被占用，则系统会直接报错无法创建docker，就可以选用另一个端口去尝试;
+>    
+>    1. 或者可以采用下面的指令：
+>       
+>       ```shell
+>       netstat -tunple | grep 端口号
+>       ```
+>    
+>    2. <font color = red>不要用自己从师兄师姐那里申请账号时获得的端口号作为映射端口。</font>不过就算用了，你也会发现报错，因为这个端口已经被你自己的ssh连接占了
+> 
+> 3. **<u>端口映射信息以及GPU配置信息等均建议创建的时候就配置完成，否则后期修改很繁琐</u>**
+> 
+> 4. 镜像的选择很重要，一定要三思，不然搭了一天之后发现换个镜像1小时就完事也不是不可能
 
 ### 容器SSH配置
 
@@ -395,7 +353,7 @@ UsePAM yes改为UsePAM no
 ```
 
 > 备注：
->
+> 
 > 1. 第一个without-password可能不一定是这个选项，我遇到的是叫prohibit-password还是类似的啥，删的太快忘了，但是无所谓，不管是啥，都换成yes就可以了
 > 2. 第一个和第二个配置信息的#都要删除
 
@@ -417,8 +375,6 @@ ssh -p [docker在服务器上选用的端口] root@[服务器的IP地址]
 另一种方式是通过Pycharm的Tools -> Development -> congiuration里加一个SFTP连接测试，Username填root，password填自己刚刚设置的密码，端口是容器映射的那个端口（8034）
 ```
 
-
-
 ### 退出容器
 
 在容器命令行内输入exit即可
@@ -434,8 +390,6 @@ docker stop pytest_crj
 
 如果只是想临时返回本地界面而不结束容器，则采用快捷键`Ctrl + P + Q`
 
-
-
 ### 重启容器
 
 ```shell
@@ -443,8 +397,6 @@ docker restart f7c249c7529a #这里的编号是Docker的ID
 # 或者可以输入名称
 docker restart pytest_crj
 ```
-
-
 
 ### 删除容器
 
@@ -457,8 +409,6 @@ docker rm docker的ID
 猜测是因为docker创建的时候失败（比如端口映射的时候映射到了一个使用中的端口），锁定了文件夹
 
 这时候找管理员申请赋权就可以解决了
-
-
 
 ### 重新进入容器
 
@@ -480,8 +430,6 @@ docker exec -it f7c2 bash # ID号可以不用输入全部，只需要输入前�
 docker attach pytest_crj # 注意，attach方式下不用输入bash
 ```
 
-
-
 ### 查看容器的挂载目录信息
 
 如果时间久了记不得自己的容器与服务器上哪一个目录映射，通过下面的两个指令均可以查询
@@ -497,40 +445,68 @@ docker inspect docker的编号 | grep Mounts -A 20
 
 
 
+### docker跨服务器迁移
+
+如果在A服务器上配置好了一个docker，~~发现自己想多开几个账号耍耍~~结果带不动自己的模型，需要迁移到B服务器上，可以通过以下方式将自己精心整理的docker迁移过去
+
+首先将docker压缩为image：
+
+```shell
+docker export docker的ID或者名字 > temp_image.tar
+cat temp_image.tar | docker import - temp:demo
+# 执行后，通过docker images可以看到新出现了一个名字是temp，TAG栏叫demo的新image
+```
+
+然后将image打包保存为文件：
+
+```shell
+docker save temp > /home/student/temp.tar
+```
+
+然后利用scp指令：
+
+```shell
+# 先登录到目标B服务器上，然后在B服务器上执行下面的scp指令
+# 假设A服务器上，打包好的image位置在/home下，需要迁移到B服务器的目录/home/new下
+scp A的用户名@A的IP地址:/home /home/new
+# 这时候会提示输入A服务器上的用户名密码，输入完毕即可.从历史数据来看，通常打包好的image都有几十个G那么大，在这一步会消耗半个小时起步的时间
+```
+
+迁移完毕镜像，再导入镜像并生成docker:
+
+```shell
+docker load < /home/new/temp.tar
+docker run --name --gpus all new_docker -it temp bash
+```
+
 
 
 ## Pycharm连接服务器
 
 神经网络训练中，如何使用pycharm专业版连接服务器
 
-
-
 ### Pycharm专业版获取途径
 
 1. ~~盗版是绝对要谴责的，但是如果能偷偷用那就没法谴责了对吧？~~
 2. 在校生身份，从jetbrains官网申请在校大学生免费使用Pycharm专业版。在此之前需要获取一个edu.cn结尾的邮箱，用该邮箱申请即可。整个过程无需科学上网
 
-
-
 ### 连接至服务器
 
 1. ![image-20211106110350028](image-20211106110350028.png)
-
+   
    选择`tools - deployment - configuration `
 
 2. 左上角+号新建SFTP连接，连接名称自行命名，不重要
 
 3. ![image-20211106110613746](image-20211106110613746.png)
-
+   
    p选择`SSH - configuration`后面的省略号，配置IP和端口
-
+   
    ![image-20211106110742957](image-20211106110742957.png)
-
+   
    配置信息包括IP地址，端口号，用户名以及密码。配置后可以测试连通性。如图表示测试成功
 
 4. 其他的信息（默认根目录是服务器的根目录，建议选择自己的账号所在的目录作为根目录）录入完成后，
-
-
 
 ### 配置解释器
 
@@ -550,8 +526,6 @@ docker inspect docker的编号 | grep Mounts -A 20
 
 ![image-20211109172757661](image-20211109172757661.png)
 
-
-
 ### 自动同步
 
 ![image-20220315105548187](image-20220315105548187.png)
@@ -565,13 +539,13 @@ docker inspect docker的编号 | grep Mounts -A 20
 #### 我的pycharm同步服务器上的文件夹和项目Python解释器之后，没法通过setting里的interpreter安装第三方库怎么办？
 
 > 1. 如果用的是conda，直接在服务器里运行`conda install numpy（假如要装numpy）`即可
->
+>    
 >    > 修改conda源：
->    >
+>    > 
 >    > 1. `vim ~/.condarc`
->    >
+>    > 
 >    > 2. 在里面输入如下内容：
->    >
+>    >    
 >    >    ```
 >    >    channels:
 >    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
@@ -580,9 +554,9 @@ docker inspect docker的编号 | grep Mounts -A 20
 >    >      - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/
 >    >    ssl_verify: true
 >    >    ```
->    >
+>    > 
 >    > 3. 保存退出，重新运行conda install即可
->
+> 
 > 2. 如果用的是pip……暂时没遇到这个情况，希望其他人能补充一下
 
 #### 我看到镜像里标注了cuda，Python，怎么查版本号和安装路径？
@@ -592,21 +566,15 @@ docker inspect docker的编号 | grep Mounts -A 20
    2. 版本：`python3`直接就展示版本了
 2. anaconda：`conda --version`
 
-
-
 #### 大文件和训练数据怎么下载到服务器里？
 
 1. 一般是下载到本地，然后通过pycharm或者scp指令上传到服务器，注意docker用-v指令映射目录的时候，位于服务器上的那个目录应该尽量避开home文件夹
-
+   
    ```shell
    # 在自己电脑的bash里执行如下指令可以下载服务器上的文件到本地
    # scp -P 端口号 -r 用户名@服务器IP地址:服务器上的目录  本地目录
    scp -P 22000 -r student@10.112.32.43:/home/test /home/Document
    ```
-
-   
-
-
 
 #### 镜像怎么选择啊？
 
@@ -618,15 +586,11 @@ docker inspect docker的编号 | grep Mounts -A 20
 
 4. 如果服务器上没有合适的镜像，就去到dockerhub找一个。实验室里不愿透露姓名的男子刘某建议选用`cuda+版本号`作为搜索关键字
 
-   
-
 #### 为啥我pycharm在连接docker的时候显示connect refuse？
 
 1. 情况一：你自己密码记错了，建议上服务器执行命令`passwd 用户名(一般docker里是root)`重置密码
 2. 情况二：你没设置docker里的ssh或者没有把ssh设置为开机自启动，[参考这里重新配置ssh或者重启ssh](###容器SSH配置)
 3. 情况三（很少见）：服务器上的与docker相连的映射端口被关闭了，向管理员申请打开端口
-
-
 
 #### 如果我跑训练模型时间很久，导致ssh断开连接，再次重进服务器的时候，输出的训练信息在界面上都丢失了怎么办？
 
@@ -648,21 +612,15 @@ python3 train.py | tee log.txt
 python3 train.py > log.txt 2>&1 &
 ```
 
-
-
 #### 如果在执行apt-get update的时候，总是显示进度为0怎么办
 
 多半是创建docker的时候端口映射出问题了，建议重新创建一个docker重头开始吧
-
-
 
 #### apt-get update显示硬盘空间不足
 
 ![image-20220407155131992](image-20220407155131992.png)
 
 如果出现如下情况，多半是硬盘/home文件夹满了，删掉点不用的docker就行了
-
-
 
 #### apt-get update显示网络错误
 
@@ -678,8 +636,6 @@ Clearsigned file isn't valid, got 'NOSPLIT' (does the network require authentica
 curl 'http://10.3.8.211/login' --data "user=&pass=" # user=后面填自己的校园网账号，pass填自己校园网账号密码
 ```
 
-
-
 #### 服务器IP地址变动之后，重新连接发现ssh连接报错，提示Warning并拒绝连接
 
 多半是因为ssh密钥变动导致拒绝连接了。
@@ -694,8 +650,6 @@ rm ~/.ssh/known_hosts
 
 如果是Windows，等一个教程……
 
-
-
 # 常用指令
 
 ## 查看服务器当前状态的指令
@@ -708,8 +662,6 @@ nvidia-smi # 显示不全的情况下，用-a可以显示完整信息，但不�
 df -h
 ```
 
-
-
 ## 一些服务器可以使用的小功能
 
 ### 校园网账户查询
@@ -719,8 +671,6 @@ df -h
 ~~这个功能后期可以改为代码运行完毕的时候发送邮件提醒自己运行结束了（其实并不能，因为docker里再做一个Ubuntu有点呆呆的）~~
 
 ~~然而这个功能出于安全性，不建议在服务器上长期部署，因为密码可能会明文保存~~
-
-
 
 #### 建立邮件服务
 
@@ -792,18 +742,16 @@ echo '下面是筛选后的信息'
 error_judge=`cat Money.aspx | grep 错误`
 echo "error_judge:$error_judge"
 if [ $error_judge ];
-	then echo 'cookie已经失效，请更换';
-	mail -s '爬虫的cookie已经失效' 2113159231@qq.com <<< '爬虫的cookie已经失效，尽快更换'
+    then echo 'cookie已经失效，请更换';
+    mail -s '爬虫的cookie已经失效' 2113159231@qq.com <<< '爬虫的cookie已经失效，尽快更换'
 else
-	iconv -c  -f 'utf-8' -t 'UTF-8' info.txt > info2.txt # 这一步属于历史遗留代码，不知道删了有没有用，反正留着没啥影响……
-	mail -s '补助金' 你的邮箱@qq.com < info2.txt
-	echo '邮件已发送'
+    iconv -c  -f 'utf-8' -t 'UTF-8' info.txt > info2.txt # 这一步属于历史遗留代码，不知道删了有没有用，反正留着没啥影响……
+    mail -s '补助金' 你的邮箱@qq.com < info2.txt
+    echo '邮件已发送'
 fi
 ```
 
 执行脚本就可以了
-
-
 
 #### 一些备注
 
@@ -814,7 +762,7 @@ fi
 
 ## 服务器维修
 
-### Network is unreachable
+### Network is unreachable（这一个标题由于服务器搬迁，内容不一定再适用了 —— 2022年9.7日修订）
 
 PC3是115服务器（门口两台一起放着的服务器里靠外面的那一台），204服务器是PC4（门口两台一起的服务器里贴着墙的那一台）
 
@@ -825,7 +773,7 @@ PC3是115服务器（门口两台一起放着的服务器里靠外面的那一�
 2. 走到实验室找到服务器，把服务器屁股上的无线模块拔下来重新插一下（就是带一根家用WiFi一样天线的）
 
 3. 然后执行如下命令：
-
+   
    ```shell
    先进入/home/xinngximing/rt18821CU文件夹
    
@@ -836,18 +784,27 @@ PC3是115服务器（门口两台一起放着的服务器里靠外面的那一�
    sudo usb_modeswitch -KW -v 0bda -p 1a2b
    # 这个时候执行nmcli c s(是connect show的缩写）AP_Wired2WireLess_2E15那个网绿色代表已经连上了，不用再管，白色需要激活
    sudo nmcli connection up AP_Wired2WireLess_2E15
-   
    ```
 
 4. 如果需要切换显示器界面，按一下连着的转换器切换到PC4即可。如果坏掉的是204服务器，有可能需要用网线连接到交换机上，通过有线地址外部访问维修
-
+   
    转换器如图所示
-
+   
     ![image-20220322161004156](image-20220322161004156.png)
 
-
-
 > 如果还有其他问题，参考SYF师姐的word文档就行。
+
+### 新的network恢复方案（2022年9月7日修订）
+
+到实验室，直接拔掉服务器后面的外置wifi模块，然后连上显示器，进入command界面，输入：
+
+```shell
+service wireless on
+```
+
+正常应该跑出来一堆报告，~~具体是什么我忘了，反正很长就是了~~，然后登陆一下校园网就行了
+
+
 
 ### 硬盘挂载
 
@@ -880,7 +837,7 @@ sudo mount /dev/sda1 /data
 #### 硬盘挂载出错
 
 > 一般我们的硬盘格式是ext4，这种可以直接挂载，但是假如是NTFS，则需要额外的操作
->
+> 
 > ==Warning==: 下面方法并未经过验证
 
 ```bash
@@ -918,6 +875,7 @@ sudo fsck /dev/sda
 该命令可能需要一些时间才能完成，具体取决于驱动器的大小。该过程完成后，将显示一个数字。“ 0”表示未发现任何错误；“ 1”表示发现并纠正了错误；“ 2”表示应重新引导系统；并且“ 4”表示已找到文件系统错误，但无法更正。其他任何数字均表示该实用程序未正确运行。
 
 修复完成后重新运行 sudo mount /dev/sda /data即可挂载
+
 # NLP学习路径
 
 记录一下自己入门的流程，以防以后基本功丢了没法拾回来
@@ -930,8 +888,6 @@ sudo fsck /dev/sda
 
 1. 《深度学习的数学》：适合完全不懂什么是神经网络的人阅读
 
-
-
 ### 教程
 
 1. transformer：[Transformer论文逐段精读【论文精读】_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1pu411o7BE/)
@@ -939,16 +895,14 @@ sudo fsck /dev/sda
 2. Bert：
 3. 图神经网络：
 
-
-
 ## 一些调整模型的经验
 
 ### 常见报错
 
 1. RuntimeError: DataLoader worker (pid(s) 13364, 13365) exited unexpectedly
-
+   
    这种多半是batch_size大了，也有一种说法是cuda的环境中内存不足，我自己是把batch_size减小了一半多，成功运行
 
 2. ERROR: Unexpected bus error encountered in worker. This might be caused by insufficient shared memory (shm)
-
+   
    内存不足，改docker的分配的虚拟内存。理论上可以通过``docker stop `并修改配置文件实现，但是很麻烦，而且还需要管理员权限。我自己是重新建了一个docker……
