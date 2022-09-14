@@ -7,6 +7,8 @@
 > 对于Linux操作不熟练的话，可以参考蒋砚军老师的本科Linux课程，我自己这门课的笔记放在了[cuberJ/LinuxNotes: Linux环境基础指令使用 (github.com)](https://github.com/cuberJ/LinuxNotes)
 > 
 > Git的操作笔记：[cuberJ/HowToUseGit: Github使用操作](https://github.com/cuberJ/HowToUseGit)
+> 
+> 服务器配置信息见石墨文档：https://shimo.im/sheets/L9kBMb66WbCZ15qK/MODOC/ 
 
 首先需要先从师兄师姐那里申请账号，密码，端口号和服务器所在的IP地址，再进行以下操作
 
@@ -443,8 +445,6 @@ docker inspect docker的编号 | grep Mounts -A 20
 
 ![image-20211109155327192](image-20211109155327192.png)
 
-
-
 ### docker跨服务器迁移
 
 如果在A服务器上配置好了一个docker，~~发现自己想多开几个账号耍耍~~结果带不动自己的模型，需要迁移到B服务器上，可以通过以下方式将自己精心整理的docker迁移过去
@@ -478,8 +478,6 @@ scp A的用户名@A的IP地址:/home /home/new
 docker load < /home/new/temp.tar
 docker run --name --gpus all new_docker -it temp bash
 ```
-
-
 
 ## Pycharm连接服务器
 
@@ -803,8 +801,6 @@ service wireless on
 ```
 
 正常应该跑出来一堆报告，~~具体是什么我忘了，反正很长就是了~~，然后登陆一下校园网就行了
-
-
 
 ### 硬盘挂载
 
