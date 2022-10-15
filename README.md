@@ -139,7 +139,7 @@ docker run --name tmprun -it hello-world
 sudo apt-get install build-essential
 
 # 查看驱动安装版本
-ubuntu-drivers devices
+ubuntu-drivers devices # 如果提示无目录，参考该方案https://www.361shipin.com/blog/1525720563589316608
 # 显示内容如下：
 == /sys/devices/pci0000:00/0000:00:01.0/0000:01:00.0 ==
 modalias : pci:v000010DEd00002208sv00001458sd00004081bc03sc00i00
