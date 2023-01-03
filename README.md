@@ -209,6 +209,20 @@ docker pull lbjcom/cuda10.1-pytorch1.7.1
 # 显示true表示可以检测到显卡
 ```
 
+如果遇到如下报错：
+
+```shell
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json?all=1": dial unix /var/run/docker.sock: connect: permission denied
+```
+
+执行：
+
+```shell
+sudo chmod 666 /var/run/docker.sock
+```
+
+
+
 ## 用户管理
 
 创建用户
@@ -877,6 +891,18 @@ sudo fsck /dev/sda
 该命令可能需要一些时间才能完成，具体取决于驱动器的大小。该过程完成后，将显示一个数字。“ 0”表示未发现任何错误；“ 1”表示发现并纠正了错误；“ 2”表示应重新引导系统；并且“ 4”表示已找到文件系统错误，但无法更正。其他任何数字均表示该实用程序未正确运行。
 
 修复完成后重新运行 sudo mount /dev/sda /data即可挂载
+
+
+
+### 2023年1月2日630室内所有服务器ssh全部断联
+
+分析：全部断联一开始以为是停电后服务器没有自启动，但是后来发现所有机器依然在运转
+
+检测发现服务器提示无网络连接，怀疑是AP_Wirelessed网络出问题
+
+断开交换机电源几秒后重新连接电源，五分钟后检测到6个服务器中的五个都自动恢复了连接
+
+剩下一台服务器的WiFi和有线连接均无效，重启机器后自动恢复
 
 # NLP学习路径
 
