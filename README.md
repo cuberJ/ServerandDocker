@@ -223,6 +223,29 @@ sudo chmod 666 /var/run/docker.sock
 
 
 
+### 驱动更新
+
+```shell
+# 卸载当前的Nvidia驱动程序。可以使⽤以下命令从Ubuntu软件包管理器中卸载驱动程序 
+sudo apt-get purge nvidia-* 
+# 更新软件包索引 
+sudo apt-get update 
+# 重启计算机 
+sudo reboot now 
+# 添加Nvidia官⽅源 
+sudo add-apt-repository ppa:graphics-drivers/ppa 
+# 列出可⽤的驱动版本 
+sudo apt search nvidia-driver 
+# 安装最新的 Nvidia 驱动, 460 是 Nvidia 驱动的版本号，您可以根据⾃⼰的需求选择适当 的版本。 ⼤约耗时1h 
+sudo apt-get install nvidia-driver-<version> 
+# 验证是否安装成功
+nvidia-smi
+```
+
+
+
+
+
 ## 用户管理
 
 创建用户
