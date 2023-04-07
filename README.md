@@ -175,7 +175,7 @@ sudo apt-get install nvidia-container-toolkit
 
 ```shell
 sudo apt-get install nvidia-container-runtime
-systemctl docker restart
+emctl docker restart
 ```
 
 #### 如果系统是22.04：（[在Ubuntu使用nvidia-docker从零搭建pytorch容器环境 | Tnnidm-Blog](https://www.tnnidm.com/install-nvidia-docker-in-ubuntu/)）
@@ -243,6 +243,22 @@ nvidia-smi
 ```
 
 
+
+## 显存清理
+
+第一种方式是执行`nvidia-smi`，查看现在某一块显卡上占有的进程
+
+<img src="image-20230407101647330.png" alt="image-20230407101647330" style="zoom:50%;" />
+
+第一例里是GPU编号，可以看到显卡0上依然存留了六七个进程，其中占用率最高的是311707号进程（9962M），清理：
+
+```shell
+sudo kill -9 311707
+```
+
+
+
+第二种方式是万能的重启服务器，推荐没人用显卡的时候暴力重启一下，顺带能解决一堆乱七八糟的问题😊
 
 
 
