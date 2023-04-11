@@ -669,6 +669,14 @@ python3 train.py | tee log.txt
 python3 train.py > log.txt 2>&1 &
 ```
 
+当然还有一种比较粗暴的方式，就是在宿主机界面执行日志查看
+
+```shell
+docker logs --since 24h EIDER # 查看名称为EIDER的容器过去24小时里所有的标准输出内容
+```
+
+
+
 #### 如果在执行apt-get update的时候，总是显示进度为0怎么办
 
 多半是创建docker的时候端口映射出问题了，建议重新创建一个docker重头开始吧
